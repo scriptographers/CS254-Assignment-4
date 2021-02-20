@@ -1,4 +1,4 @@
--- MODULE TwoByOneMux - only allowed component of OnebitFullAdd
+-- TwoByOneMux - only allowed component of OnebitFullAdd
 library work;
 use work.all;
 

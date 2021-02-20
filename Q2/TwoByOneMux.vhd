@@ -1,4 +1,4 @@
--- MODULE TwoByOneMux - only allowed component
+-- TwoByOneMux - only allowed component for Comparator
 library work;
 use work.all;
 

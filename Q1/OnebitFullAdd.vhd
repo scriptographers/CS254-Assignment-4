@@ -1,4 +1,4 @@
--- MODULE OnebitFullAdd - only allowed component of FourbitFullAdd
+-- OnebitFullAdd - only allowed component of FourbitFullAdd
 library work;
 use work.all;
 
