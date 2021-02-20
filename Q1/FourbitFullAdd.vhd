@@ -1,5 +1,4 @@
 -- TOP MODULE: FourbitFullAdd
-
 library work;
 use work.all;
 
@@ -20,7 +19,7 @@ end entity;
 architecture FourbitFullAdder of FourbitFullAdd is
 
    signal carries: std_logic_vector (2 downto 0); -- Stores the three intermediate carries
-   
+
    component OnebitFullAdd is
       port(
          a, b, cin : in std_logic;

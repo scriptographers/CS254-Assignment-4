@@ -1,4 +1,4 @@
--- Module - CompE
+-- MODULE CompE
 library work;
 use work.all;
 
@@ -26,12 +26,15 @@ begin
       port map (i(0) => '0', i(1) => '1', sel => b(1), z => sig(0));
    mux_b1_1: TwoByOneMux
       port map (i(0) => '1', i(1) => '0', sel => b(1), z => sig(1));
+
    mux_a1: TwoByOneMux
       port map (i(0) => sig(1), i(1) => sig(0), sel => a(1), z => sig(2));
+
    mux_b0_0: TwoByOneMux
       port map (i(0) => '0', i(1) => sig(2), sel => b(0), z => sig(3));
    mux_b0_1: TwoByOneMux
       port map (i(0) => sig(2), i(1) => '0', sel => b(0), z => sig(4));
+
    mux_a0: TwoByOneMux
       port map (i(0) => sig(4), i(1) => sig(3), sel => a(0), z => z);
 
