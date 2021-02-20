@@ -10,6 +10,7 @@ Q1:
     TwoByOneMux.vhd    : 2X1 MUX using structural modelling
     OnebitFullAdd.vhd  : Sub-component to compute One bit Full Adder made from the ROBDD using only 2x1 muxes
     FourbitFullAdd.vhd : 4-bit Full adder made using the above component
+    waveform.zip       : The simulation results
 
 Q2:
     report.pdf         : Contains the Truth table and the Karnaugh map working for minimized expression (for all 3 variables)
