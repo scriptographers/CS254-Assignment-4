@@ -1,0 +1,395 @@
+\documentclass[11pt, fleqn]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{enumitem}
+\usepackage[left=0.75in, right=0.75in, bottom=0.75in, top=1.0in]{geometry}
+\usepackage{floatrow}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage{sectsty}
+\sectionfont{\centering}
+
+
+\usepackage[perpage]{footmisc}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{190100044 \& 190100055}
+\rhead{CS 254: Assignment 4}
+\renewcommand{\footrulewidth}{1.0pt}
+\cfoot{Page \thepage}
+
+\setlength{\parindent}{0em}
+\renewcommand{\arraystretch}{2}
+
+\title{CS 254: Assignment 4}
+\author{
+\begin{tabular}{|c|c|}
+     \hline
+     Devansh Jain & Harshit Varma \\
+     \hline
+     190100044 & 190100055 \\
+     \hline
+\end{tabular}
+}
+
+\date{\today}
+
+\usepackage[dvipsnames]{xcolor}
+
+%% K-Maps: https://tex.stackexchange.com/questions/140567/drawing-karnaughs-maps-in-latex
+\usepackage{tikz}
+\usetikzlibrary{matrix,calc}
+
+%isolated term
+%#1 - Optional. Space between node and grouping line. Default=0
+%#2 - node
+%#3 - filling color
+\newcommand{\implicantsol}[3][0]{
+    \draw[rounded corners=3pt, fill=#3, opacity=0.3] ($(#2.north west)+(135:#1)$) rectangle ($(#2.south east)+(-45:#1)$);
+    }
+
+
+%internal group
+%#1 - Optional. Space between node and grouping line. Default=0
+%#2 - top left node
+%#3 - bottom right node
+%#4 - filling color
+\newcommand{\implicant}[4][0]{
+    \draw[rounded corners=3pt, fill=#4, opacity=0.3] ($(#2.north west)+(135:#1)$) rectangle ($(#3.south east)+(-45:#1)$);
+    }
+
+%group lateral borders
+%#1 - Optional. Space between node and grouping line. Default=0
+%#2 - top left node
+%#3 - bottom right node
+%#4 - filling color
+\newcommand{\implicantcostats}[4][0]{
+    \draw[rounded corners=3pt, fill=#4, opacity=0.3] ($(rf.east |- #2.north)+(90:#1)$)-| ($(#2.east)+(0:#1)$) |- ($(rf.east |- #3.south)+(-90:#1)$);
+    \draw[rounded corners=3pt, fill=#4, opacity=0.3] ($(cf.west |- #2.north)+(90:#1)$) -| ($(#3.west)+(180:#1)$) |- ($(cf.west |- #3.south)+(-90:#1)$);
+}
+
+%group top-bottom borders
+%#1 - Optional. Space between node and grouping line. Default=0
+%#2 - top left node
+%#3 - bottom right node
+%#4 - filling color
+\newcommand{\implicantdaltbaix}[4][0]{
+    \draw[rounded corners=3pt, fill=#4, opacity=0.3] ($(cf.south -| #2.west)+(180:#1)$) |- ($(#2.south)+(-90:#1)$) -| ($(cf.south -| #3.east)+(0:#1)$);
+    \draw[rounded corners=3pt, fill=#4, opacity=0.3] ($(rf.north -| #2.west)+(180:#1)$) |- ($(#3.north)+(90:#1)$) -| ($(rf.north -| #3.east)+(0:#1)$);
+}
+
+%group corners
+%#1 - Optional. Space between node and grouping line. Default=0
+%#2 - filling color
+\newcommand{\implicantcantons}[2][0]{
+    \draw[rounded corners=3pt, opacity=.3] ($(rf.east |- 0.south)+(-90:#1)$) -| ($(0.east |- cf.south)+(0:#1)$);
+    \draw[rounded corners=3pt, opacity=.3] ($(rf.east |- 8.north)+(90:#1)$) -| ($(8.east |- rf.north)+(0:#1)$);
+    \draw[rounded corners=3pt, opacity=.3] ($(cf.west |- 2.south)+(-90:#1)$) -| ($(2.west |- cf.south)+(180:#1)$);
+    \draw[rounded corners=3pt, opacity=.3] ($(cf.west |- 10.north)+(90:#1)$) -| ($(10.west |- rf.north)+(180:#1)$);
+    \fill[rounded corners=3pt, fill=#2, opacity=.3] ($(rf.east |- 0.south)+(-90:#1)$) -|  ($(0.east |- cf.south)+(0:#1)$) [sharp corners] ($(rf.east |- 0.south)+(-90:#1)$) |-  ($(0.east |- cf.south)+(0:#1)$) ;
+    \fill[rounded corners=3pt, fill=#2, opacity=.3] ($(rf.east |- 8.north)+(90:#1)$) -| ($(8.east |- rf.north)+(0:#1)$) [sharp corners] ($(rf.east |- 8.north)+(90:#1)$) |- ($(8.east |- rf.north)+(0:#1)$) ;
+    \fill[rounded corners=3pt, fill=#2, opacity=.3] ($(cf.west |- 2.south)+(-90:#1)$) -| ($(2.west |- cf.south)+(180:#1)$) [sharp corners]($(cf.west |- 2.south)+(-90:#1)$) |- ($(2.west |- cf.south)+(180:#1)$) ;
+    \fill[rounded corners=3pt, fill=#2, opacity=.3] ($(cf.west |- 10.north)+(90:#1)$) -| ($(10.west |- rf.north)+(180:#1)$) [sharp corners] ($(cf.west |- 10.north)+(90:#1)$) |- ($(10.west |- rf.north)+(180:#1)$) ;
+}
+
+%Empty Karnaugh map 4x4
+\newenvironment{Karnaugh}%
+{
+\begin{tikzpicture}[baseline=(current bounding box.north),scale=0.8]
+\draw (0,0) grid (4,4);
+\draw (0,4) -- node [pos=0.9,above right,anchor=south west] {$b_1b_0$} node [pos=0.9,below left,anchor=north east] {$a_1a_0$} ++(135:1);
+%
+\matrix (mapa) [matrix of nodes,
+        column sep={0.8cm,between origins},
+        row sep={0.8cm,between origins},
+        every node/.style={minimum size=0.3mm},
+        anchor=8.center,
+        ampersand replacement=\&] at (0.5,0.5)
+{
+\& |(c00)| 00         \& |(c01)| 01         \& |(c11)| 11         \& |(c10)| 10 \& |(cf)| \phantom{00} \\
+%
+|(r00)| 00             \& |(0)|  \phantom{0} \& |(1)|  \phantom{0} \& |(3)|  \phantom{0} \& |(2)|  \phantom{0} \& \\
+%
+|(r01)| 01  \& |(4)|  \phantom{0} \& |(5)|  \phantom{0} \& |(7)|  \phantom{0} \& |(6)|  \phantom{0} \&                     \\
+%
+|(r11)| 11             \& |(12)| \phantom{0} \& |(13)| \phantom{0} \& |(15)| \phantom{0} \& |(14)| \phantom{0} \&                     \\
+%
+|(r10)| 10             \& |(8)|  \phantom{0} \& |(9)|  \phantom{0} \& |(11)| 
+\phantom{0} \& |(10)| \phantom{0} \&                     \\
+%
+|(rf) | \phantom{00}   \&                    \&                    \&                    \&                    \&                     \\
+};
+}%
+{
+\end{tikzpicture}
+}
+
+%Empty Karnaugh map 2x4
+\newenvironment{Karnaughvuit}%
+{
+\begin{tikzpicture}[baseline=(current bounding box.north),scale=0.8]
+\draw (0,0) grid (4,2);
+\draw (0,2) -- node [pos=0.7,above right,anchor=south west] {bc} node [pos=0.7,below left,anchor=north east] {a} ++(135:1);
+%
+\matrix (mapa) [matrix of nodes,
+        column sep={0.8cm,between origins},
+        row sep={0.8cm,between origins},
+        every node/.style={minimum size=0.3mm},
+        anchor=4.center,
+        ampersand replacement=\&] at (0.5,0.5)
+{
+                      \& |(c00)| 00         \& |(c01)| 01         \& |(c11)| 11         \& |(c10)| 10         \& |(cf)| \phantom{00} \\
+|(r00)| 0             \& |(0)|  \phantom{0} \& |(1)|  \phantom{0} \& |(3)|  \phantom{0} \& |(2)|  \phantom{0} \&                     \\
+|(r01)| 1             \& |(4)|  \phantom{0} \& |(5)|  \phantom{0} \& |(7)|  \phantom{0} \& |(6)|  \phantom{0} \&                     \\
+|(rf) | \phantom{00}  \&                    \&                    \&                    \&                    \&                     \\
+};
+}%
+{
+\end{tikzpicture}
+}
+
+%Empty Karnaugh map 2x2
+\newenvironment{Karnaughquatre}%
+{
+\begin{tikzpicture}[baseline=(current bounding box.north),scale=0.8]
+\draw (0,0) grid (2,2);
+\draw (0,2) -- node [pos=0.7,above right,anchor=south west] {b} node [pos=0.7,below left,anchor=north east] {a} ++(135:1);
+%
+\matrix (mapa) [matrix of nodes,
+        column sep={0.8cm,between origins},
+        row sep={0.8cm,between origins},
+        every node/.style={minimum size=0.3mm},
+        anchor=2.center,
+        ampersand replacement=\&] at (0.5,0.5)
+{
+          \& |(c00)| 0          \& |(c01)| 1  \\
+|(r00)| 0 \& |(0)|  \phantom{0} \& |(1)|  \phantom{0} \\
+|(r01)| 1 \& |(2)|  \phantom{0} \& |(3)|  \phantom{0} \\
+};
+}%
+{
+\end{tikzpicture}
+}
+
+%Defines 8 or 16 values (0,1,X)
+\newcommand{\contingut}[1]{%
+\foreach \x [count=\xi from 0]  in {#1}
+     \path (\xi) node {\x};
+}
+
+%Places 1 in listed positions
+\newcommand{\minterms}[1]{%
+    \foreach \x in {#1}
+        \path (\x) node {1};
+}
+
+%Places 0 in listed positions
+\newcommand{\maxterms}[1]{%
+    \foreach \x in {#1}
+        \path (\x) node {0};
+}
+
+%Places X in listed positions
+\newcommand{\indeterminats}[1]{%
+    \foreach \x in {#1}
+        \path (\x) node {X};
+}
+%% End
+
+
+\begin{document}
+
+\maketitle
+\renewcommand{\arraystretch}{1}
+
+\section*{Question 4}
+\label{q4}
+\addcontentsline{toc}{section}{Question 4}
+\setcounter{equation}{0}
+
+\subsection*{Truth Table}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|}
+         \hline
+         $\mathbf{a_1}$ & $\mathbf{a_0}$ & $\mathbf{b_1}$ & $\mathbf{b_0}$ & $\mathbf{l}$ & $\mathbf{g}$ & $\mathbf{e}$\\
+         \hline % 1
+         0 & 0  & 0 & 0      & 0 & 0 & 1\\
+         \hline % 2
+         0 & 0  & 0 & 1      & 1 & 0 & 0\\
+         \hline % 3
+         0 & 0  & 1 & 0      & 1 & 0 & 0\\
+         \hline % 4
+         0 & 0  & 1 & 1      & 1 & 0 & 0\\
+         \hline % 5
+         0 & 1  & 0 & 0      & 0 & 1 & 0\\
+         \hline % 6
+         0 & 1  & 0 & 1      & 0 & 0 & 1\\
+         \hline % 7
+         0 & 1  & 1 & 0      & 1 & 0 & 0\\
+         \hline % 8
+         0 & 1  & 1 & 1      & 1 & 0 & 0\\
+         \hline % 9
+         1 & 0  & 0 & 0      & 0 & 1 & 0\\
+         \hline % 10
+         1 & 0  & 0 & 1      & 0 & 1 & 0\\
+         \hline % 11
+         1 & 0  & 1 & 0      & 0 & 0 & 1\\
+         \hline % 12
+         1 & 0  & 1 & 1      & 1 & 0 & 0\\
+         \hline % 13
+         1 & 1  & 0 & 0      & 0 & 1 & 0\\
+         \hline % 14
+         1 & 1  & 0 & 1      & 0 & 1 & 0\\
+         \hline % 15
+         1 & 1  & 1 & 0      & 0 & 1 & 0\\
+         \hline % 16
+         1 & 1  & 1 & 1      & 0 & 0 & 1\\
+         \hline
+    \end{tabular}
+    \caption{Truth table for a 2-bit comparator}
+    \label{tab:tt_comp}
+\end{table}
+
+\subsection*{K-Maps}
+
+\subsubsection*{l ($a < b$)}
+
+% 4x4 K-Map
+\begin{Karnaugh}
+    \contingut{
+        % Indices of minterms
+        % 0,1,2,3,4,...    
+        0,1,1,1,0,0,1,1,0,0,0,1,0,0,0,0
+    }
+    \implicant{1}{3}{red}
+    \implicant{3}{6}{green}
+    \implicantdaltbaix[3pt]{3}{11}{yellow}
+\end{Karnaugh}
+
+Quad term: $
+\bar a_1 \bar a_0 b_1 b_0 + 
+\bar a_1 \bar a_0 b_1 \bar b_0 + 
+\bar a_1 a_0 b_1 b_0 + 
+\bar a_1 a_0 b_1 \bar b_0
+= 
+\bar a_1 \bar a_0 b_1 + \bar a_1 a_0 b_1 
+= 
+\bar a_1 b_1
+$\\
+Pair term 1: $
+\bar a_1 \bar a_0 \bar b_1 b_0 + 
+\bar a_1 \bar a_0 b_1  b_0
+=
+\bar a_1 \bar a_0 b_0
+$\\
+Pair term 2: $
+\bar a_1 \bar a_0 b_1 b_0 + 
+a_1 \bar a_0 b_1  b_0
+=
+\bar a_0 b_1 b_0
+$\\
+Minimized Expression:
+$ \boxed{\bar a_1 b_1 + \bar a_1 \bar a_0 b_0 + \bar a_0 b_1 b_0} $
+
+\subsubsection*{g ($a > b$)}
+
+% 4x4 K-Map
+\begin{Karnaugh}
+    \contingut{
+        % Indices of minterms
+        0, % 0000 
+        0, % 0001 
+        0, % 0010 
+        0, % 0011 
+        %
+        1, % 0100 
+        0, % 0101 
+        0, % 0110
+        0, % 0111 
+        %
+        1, % 1000 
+        1, % 1001
+        0, % 1010
+        0, % 1011
+        %
+        1, % 1100
+        1, % 1101
+        1, % 1110
+        0  % 1111
+    }
+    \implicant{4}{12}{red}
+    \implicant{12}{9}{green}
+    \implicantcostats{12}{14}{yellow}
+\end{Karnaugh}
+
+Quad term: $
+a_1 a_0 \bar b_1 \bar b_0 + 
+a_1 a_0 \bar b_1  b_0 + 
+a_1 \bar a_0 \bar b_1 \bar b_0 + 
+a_1 \bar a_0 \bar b_1  b_0
+= 
+a_1 a_0 \bar b_1 + a_1 \bar a_0 \bar b_1
+= 
+a_1 \bar b_1
+$\\
+Pair term 1: $
+\bar a_1 a_0 \bar b_1 \bar b_0 +
+a_1 a_0 \bar b_1 \bar b_0
+=
+a_0 \bar b_1 \bar b_0
+$\\
+Pair term 2: $
+a_1 a_0 \bar b_1 \bar b_0 + a_1 a_0 b_1 \bar b_0
+=
+a_1 a_0 \bar b_0
+$\\
+Minimized Expression:
+$ \boxed{a_1 \bar b_1  + a_1 a_0 \bar b_0 + a_0 \bar b_1 \bar b_0} $
+
+\subsubsection*{e ($a = b$)}
+% 4x4 K-Map
+\begin{Karnaugh}
+    \contingut{
+        % Indices of minterms
+        1, % 0000 
+        0, % 0001 
+        0, % 0010 
+        0, % 0011 
+        %
+        0, % 0100 
+        1, % 0101 
+        0, % 0110
+        0, % 0111 
+        %
+        0, % 1000 
+        0, % 1001
+        1, % 1010
+        0, % 1011
+        %
+        0, % 1100
+        0, % 1101
+        0, % 1110
+        1  % 1111
+    }
+    \implicant{0}{0}{red}
+    \implicant{5}{5}{green}
+    \implicant{15}{15}{orange}
+    \implicant{10}{10}{yellow}
+\end{Karnaugh}
+
+Minimized expression: $
+\bar a_1 \bar a_0 \bar b_1 \bar b_0 +
+\bar a_1 a_0 \bar b_1  b_0 + 
+a_1 a_0 b_1  b_0 + 
+a_1 \bar a_0 b_1 \bar b_0
+$
+
+\end{document}
